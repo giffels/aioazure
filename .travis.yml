@@ -1,0 +1,35 @@
+language: python
+
+python:
+  - "3.6"
+  - "3.6-dev" # 3.6 development branch
+  - "nightly" # currently points to 3.7-dev
+  - "pypy3.5"
+
+os:
+  - linux
+
+matrix:
+  allow_failures:
+  - python: "3.6-dev"
+  - python: "nightly"
+  - python: "pypy3.5"
+  include:
+    - python: 3.7
+      dist: xenial
+    - python: 3.7
+      name: Style
+      dist: xenial
+      script: python setup.py flake8
+  fast_finish: true
+
+install:
+  - pip install codecov
+  - pip install coverage
+  - pip install flake8
+
+script: coverage run setup.py test
+
+after_success:
+  - coverage report
+  - codecov
