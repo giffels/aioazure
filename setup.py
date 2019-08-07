@@ -32,7 +32,7 @@ setup(
     keywords='asyncio azure compute client',
     packages=find_packages(exclude=['tests']),
     data_files=[('models', ['models/compute.yaml'])],
-    install_requires=['PyYAML', 'simple-rest-client'],
+    install_requires=['aiohttp', 'PyYAML', 'simple-rest-client'],
     tests_require=['flake8'],
     zip_safe=False,
     test_suite='tests',
