@@ -105,3 +105,6 @@ venv.bak/
 
 # PyCharm
 .idea
+
+# test scripts
+test_scripts
