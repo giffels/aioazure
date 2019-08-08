@@ -10,5 +10,8 @@ class Authentication(object):
     def is_token_valid(self):
         return self.token_expires_at - time() > 0
 
-    async def get_credentials(self) -> None:
-        self.token = None
+    async def get_token(self) -> str:
+        if self.token and self.is_token_valid:
+            return self.token
+        else:
+            ...
