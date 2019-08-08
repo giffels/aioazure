@@ -50,17 +50,17 @@ class TestResourceProxy(TestCase):
             self.assertEqual(run_async(self.proxy, "test_method", test="TestBody"), "Test123")
 
         run_test()
-        self.resource.test_method.assert_called_with(body={'test': 'TestBody'}, header={'Authorization': 'T0ken123'})
+        self.resource.test_method.assert_called_with(body={'test': 'TestBody'}, headers={'Authorization': 'T0ken123'})
         self.auth.get_token.assert_called_with()
 
         self.mock_async_resource.reset_mock()
 
         self.resource.actions = {"test_method": {"method": "GET"}}
         run_test()
-        self.resource.test_method.assert_called_with(params={'test': 'TestBody'}, header={'Authorization': 'T0ken123'})
+        self.resource.test_method.assert_called_with(params={'test': 'TestBody'}, headers={'Authorization': 'T0ken123'})
         self.auth.get_token.assert_called_with()
 
     def test_getattr(self):
         self.assertEqual(run_async(self.proxy.test_method, test="TestBody"), "Test123")
-        self.resource.test_method.assert_called_with(body={'test': 'TestBody'}, header={'Authorization': 'T0ken123'})
+        self.resource.test_method.assert_called_with(body={'test': 'TestBody'}, headers={'Authorization': 'T0ken123'})
         self.auth.get_token.assert_called_with()
