@@ -2,10 +2,22 @@ from .auth import Authentication
 
 from simple_rest_client.resource import AsyncResource
 
+from abc import ABCMeta
+from abc import abstractmethod
 from functools import partial
 
 
-class ResourceProxy(object):
+class Proxy(metaclass=ABCMeta):
+    @abstractmethod
+    async def __call__(self, method_name: str, *args, **kwargs):
+        return NotImplemented
+
+    @abstractmethod
+    def __getattr__(self, method_name: str):
+        return NotImplemented
+
+
+class ResourceProxy(Proxy):
     def __init__(self, auth: Authentication, resource: AsyncResource) -> None:
         self.auth = auth
         self.resource = resource

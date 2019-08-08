@@ -1,10 +1,23 @@
 from aioazure.proxy import ResourceProxy
+from aioazure.proxy import Proxy
 
 from .utilities.utilities import async_return
 from .utilities.utilities import run_async
 
 from unittest import TestCase
 from unittest.mock import patch
+
+
+class TestProxy(TestCase):
+    @patch.multiple(Proxy, __abstractmethods__=set())
+    def setUp(self) -> None:
+        self.proxy = Proxy()
+
+    def test_call_proxy(self):
+        self.assertEqual(run_async(self.proxy, "test_method"), NotImplemented)
+
+    def test_getattr(self):
+        self.assertEqual(getattr(self.proxy, "test_method"), NotImplemented)
 
 
 class TestResourceProxy(TestCase):
