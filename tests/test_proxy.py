@@ -29,11 +29,22 @@ class TestResourceProxy(TestCase):
         self.auth.get_token.return_value = async_return(return_value="T0ken123")
         self.resource = self.mock_async_resource.return_value
         self.resource.test_method.return_value = async_return(return_value="Test123")
+        self.resource.actions = {"test_method": {"method": "POST"}}
         self.proxy = ResourceProxy(auth=self.auth, resource=self.resource)
 
     def test_call_proxy(self):
-        self.assertEqual(run_async(self.proxy, "test_method", test="TestBody"), "Test123")
+        def run_test():
+            self.assertEqual(run_async(self.proxy, "test_method", test="TestBody"), "Test123")
+
+        run_test()
         self.resource.test_method.assert_called_with(body={'test': 'TestBody'}, header={'Authorization': 'T0ken123'})
+        self.auth.get_token.assert_called_with()
+
+        self.mock_async_resource.reset_mock()
+
+        self.resource.actions = {"test_method": {"method": "GET"}}
+        run_test()
+        self.resource.test_method.assert_called_with(params={'test': 'TestBody'}, header={'Authorization': 'T0ken123'})
         self.auth.get_token.assert_called_with()
 
     def test_getattr(self):
