@@ -49,4 +49,4 @@ class TestAzureClient(TestCase):
 
     def test_get_attr(self):
         _ = self.client.compute
-        self.mock_resource_proxy.assert_called_with(auth=self.auth, resource="Compute123")
+        self.mock_resource_proxy.assert_called_with(resource="Compute123")

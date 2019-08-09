@@ -1,6 +1,8 @@
 from .auth import Authentication
+from .decorator import AuthDecorator
 from .resources import resource_classes
 from .resources import resource_names
+from .proxy import Proxy
 from .proxy import ResourceProxy
 
 from simple_rest_client.api import API
@@ -20,5 +22,5 @@ class AzureClient(object):
         for resource_name, resource_class in zip(resource_names, resource_classes):
             self.api.add_resource(resource_name=resource_name, resource_class=resource_class)
 
-    def __getattr__(self, resource: str) -> ResourceProxy:
-        return ResourceProxy(auth=self.auth, resource=getattr(self.api, resource))
+    def __getattr__(self, resource: str) -> Proxy:
+        return AuthDecorator(ResourceProxy(resource=getattr(self.api, resource)), auth=self.auth)

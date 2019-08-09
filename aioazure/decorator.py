@@ -25,7 +25,7 @@ class AuthDecorator(ProxyDecorator):
         self.auth = auth
 
     async def __call__(self, awaitable_method: Callable, *args, **kwargs):
-        await self.auth.get_token()
+        kwargs.setdefault("headers", {}).update({"Authorization": await self.auth.get_token()})
         return await awaitable_method(*args, **kwargs)
 
 

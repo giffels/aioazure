@@ -45,7 +45,8 @@ class TestAuthDecorator(TestCase):
         self.proxy_decorator = AuthDecorator(self.proxy, auth=self.auth)
 
     def test_call_decorator(self):
-        self.assertEqual(run_async(self.proxy_decorator, lambda: async_return(return_value="Test")), "Test")
+        self.assertEqual(run_async(self.proxy_decorator,
+                                   lambda **kwargs: async_return(return_value="Test", **kwargs)), "Test")
 
 
 class TestResponseDecorator(TestCase):
