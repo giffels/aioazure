@@ -46,19 +46,24 @@ class TestResourceProxy(TestCase):
         self.proxy = ResourceProxy(auth=self.auth, resource=self.resource)
 
     def test_call_proxy(self):
-        def run_test():
-            self.assertEqual(run_async(self.proxy, "test_method", test="TestBody"), "Test123")
+        def run_test(**kwargs):
+            self.assertEqual(run_async(self.proxy, "test_method", test="TestBody", **kwargs), "Test123")
+
+        def check_results(**kwargs):
+            self.resource.test_method.assert_called_with(**kwargs)
+            self.auth.get_token.assert_called_with()
+
+            self.mock_async_resource.reset_mock()
 
         run_test()
-        self.resource.test_method.assert_called_with(body={'test': 'TestBody'}, headers={'Authorization': 'T0ken123'})
-        self.auth.get_token.assert_called_with()
-
-        self.mock_async_resource.reset_mock()
+        check_results(body={'test': 'TestBody'}, headers={'Authorization': 'T0ken123'})
 
         self.resource.actions = {"test_method": {"method": "GET"}}
         run_test()
-        self.resource.test_method.assert_called_with(params={'test': 'TestBody'}, headers={'Authorization': 'T0ken123'})
-        self.auth.get_token.assert_called_with()
+        check_results(params={'test': 'TestBody'}, headers={'Authorization': 'T0ken123'})
+
+        run_test(headers={"TestHeader": "Test123"})
+        check_results(params={'test': 'TestBody'}, headers={"Authorization": "T0ken123", "TestHeader": "Test123"})
 
     def test_getattr(self):
         self.assertEqual(run_async(self.proxy.test_method, test="TestBody"), "Test123")
