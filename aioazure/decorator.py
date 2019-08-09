@@ -1,4 +1,4 @@
-from .auth import Authentication
+from .auth import Authenticator
 from .proxy import Proxy
 
 from abc import ABCMeta
@@ -20,7 +20,7 @@ class ProxyDecorator(Proxy, metaclass=ABCMeta):
 
 
 class AuthDecorator(ProxyDecorator):
-    def __init__(self, proxy: Proxy, auth: Authentication):
+    def __init__(self, proxy: Proxy, auth: Authenticator):
         super().__init__(proxy)
         self.auth = auth
 

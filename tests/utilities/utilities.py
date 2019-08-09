@@ -1,4 +1,13 @@
 import asyncio
+from unittest.mock import MagicMock
+
+
+class AsyncContextManagerMock(MagicMock):
+    async def __aenter__(self):
+        return self.aenter
+
+    async def __aexit__(self, *args):
+        pass
 
 
 def async_return(*args, return_value=None, **kwargs):

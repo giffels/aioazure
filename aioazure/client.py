@@ -1,4 +1,4 @@
-from .auth import Authentication
+from .auth import Authenticator
 from .decorator import AuthDecorator
 from .resources import resource_classes
 from .resources import resource_names
@@ -10,7 +10,7 @@ from simple_rest_client.api import API
 
 class AzureClient(object):
     def __init__(self, api_url: str, subscription_id: str, resource_group_name: str,
-                 auth: Authentication, timeout: int = 60) -> None:
+                 auth: Authenticator, timeout: int = 60) -> None:
         self.api_url = f"{api_url}/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers"
         self.api = API(api_root_url=self.api_url,
                        json_encode_body=True,

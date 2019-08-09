@@ -12,7 +12,7 @@ class TestAzureClient(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.mock_auth_patcher = patch('aioazure.client.Authentication')
+        cls.mock_auth_patcher = patch('aioazure.client.Authenticator')
         cls.mock_auth = cls.mock_auth_patcher.start()
 
         cls.mock_api_patcher = patch('aioazure.client.API')

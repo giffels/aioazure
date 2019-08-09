@@ -30,7 +30,7 @@ class TestAuthDecorator(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.mock_auth_patcher = patch('aioazure.decorator.Authentication')
+        cls.mock_auth_patcher = patch('aioazure.decorator.Authenticator')
         cls.mock_auth = cls.mock_auth_patcher.start()
 
     @classmethod
