@@ -13,14 +13,13 @@ class Authenticator(object):
         self._url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/token"
 
     async def get_token(self) -> str:  # Should be replace by async properties once available
-        if self.token and self.is_token_valid:
-            return self.token
-        else:
+        if not (self.token and self.is_token_valid):
             async with aiohttp.ClientSession() as session:
                 async with session.post(url=self._url, data=self.data) as response:
                     authentication_data = await response.json()
                     self.token = authentication_data.get("access_token")
                     self.token_expires_on = authentication_data.get("expires_on", 0)
+        return self.token
 
     @property
     def is_token_valid(self) -> float:
