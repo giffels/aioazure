@@ -14,7 +14,7 @@ class Authenticator(object):
 
     async def get_token(self) -> str:  # Should be replace by async properties once available
         if not (self.token and self.is_token_valid):
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(raise_for_status=True) as session:
                 async with session.post(url=self._url, data=self.data) as response:
                     authentication_data = await response.json()
                     self.token = authentication_data.get("access_token")
