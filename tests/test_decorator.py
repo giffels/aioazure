@@ -1,7 +1,9 @@
 from aioazure.decorator import ProxyDecorator
 from aioazure.decorator import AuthDecorator
+from aioazure.decorator import PagingDecorator
 from aioazure.decorator import ResponseDecorator
 
+from .utilities.utilities import AsyncContextManagerMock
 from .utilities.utilities import async_return
 from .utilities.utilities import run_async
 
@@ -47,6 +49,25 @@ class TestAuthDecorator(TestCase):
     def test_call_decorator(self):
         self.assertEqual(run_async(self.proxy_decorator,
                                    lambda **kwargs: async_return(return_value="Test", **kwargs)), "Test")
+
+
+class TestPagingDecorator(TestCase):
+    def setUp(self) -> None:
+        self.proxy = MagicMock()
+        self.proxy_decorator = PagingDecorator(self.proxy)
+
+    def test_call_decorator_pass_through(self):
+        self.assertEqual(run_async(self.proxy_decorator, lambda: async_return(return_value={"Test": "Test"})),
+                         {"Test": "Test"})
+
+    @patch('aiohttp.ClientSession.get', new_callable=AsyncContextManagerMock)
+    def test_call_decorator_next_link(self, mock_get):
+        mock_get.return_value.aenter.json.return_value = async_return(return_value={"Test2": "Test2"})
+        self.assertEqual(run_async(self.proxy_decorator,
+                                   lambda: async_return(return_value={"nextLink": "https://test.com",
+                                                                      "value": [{"Test": "Test"}]})),
+                         [{"Test": "Test"}, {"Test2": "Test2"}])
+        mock_get.assert_called_with(url='https://test.com')
 
 
 class TestResponseDecorator(TestCase):
