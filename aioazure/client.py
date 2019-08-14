@@ -1,6 +1,6 @@
 from .auth import Authenticator
 from .decorator import AuthDecorator
-from .decorator import PagingDecorator
+from .decorator import ResponseDecorator
 from .resources import resource_classes
 from .resources import resource_names
 from .proxy import Proxy
@@ -24,4 +24,4 @@ class AzureClient(object):
             self.api.add_resource(resource_name=resource_name, resource_class=resource_class)
 
     def __getattr__(self, resource: str) -> Proxy:
-        return AuthDecorator(PagingDecorator(ResourceProxy(resource=getattr(self.api, resource))), auth=self.auth)
+        return AuthDecorator(ResponseDecorator(ResourceProxy(resource=getattr(self.api, resource))), auth=self.auth)

@@ -87,7 +87,7 @@ class PagingDecorator(ProxyDecorator):
 
 class ResponseDecorator(ProxyDecorator):
     def __init__(self, proxy: Proxy):
-        super().__init__(proxy)
+        super().__init__(PagingDecorator(AsyncOperationDecorator(proxy)))
 
     async def __call__(self, awaitable_method: Callable, *args, **kwargs):
         return await awaitable_method(*args, **kwargs)
