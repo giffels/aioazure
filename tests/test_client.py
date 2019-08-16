@@ -1,5 +1,5 @@
 from aioazure.client import AzureClient
-from aioazure.resources.compute import AzureComputeResource
+import aioazure.client as aioazure_client
 
 from unittest import TestCase
 from unittest.mock import patch
@@ -35,6 +35,12 @@ class TestAzureClient(TestCase):
 
         self.mock_api.return_value.compute = "Compute123"
 
+        self.resource_classes = [type('AzureComputeResource', (object,), {})]
+        self.resource_names = ['compute']
+
+        aioazure_client.resource_classes = self.resource_classes
+        aioazure_client.resource_names = self.resource_names
+
         self.client = AzureClient(api_url=self.api_url, subscription_id=self.subscription_id,
                                   resource_group_name=self.resource_group_name, auth=self.auth)
 
@@ -44,8 +50,9 @@ class TestAzureClient(TestCase):
             api_root_url=api_root_url,
             headers={'Accept': 'application/json', 'Content-Type': 'application/json'},
             json_encode_body=True, timeout=60)
-        self.mock_api.return_value.add_resource.assert_called_with(resource_class=AzureComputeResource,
-                                                                   resource_name='compute')
+        for resource_class, resource_name in zip(self.resource_classes, self.resource_names):
+            self.mock_api.return_value.add_resource.assert_called_with(resource_class=resource_class,
+                                                                       resource_name=resource_name)
 
     def test_get_attr(self):
         _ = self.client.compute

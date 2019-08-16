@@ -1,11 +1,14 @@
-from aioazure.resources.compute import AzureComputeResource
+from aioazure.resources import resource_classes
 
 from unittest import TestCase
 
 
 class TestAzureComputeResource(TestCase):
     def setUp(self) -> None:
-        self.compute = AzureComputeResource(api_root_url='https://test.azure.com')
+        for resource_class in resource_classes:
+            if resource_class.__name__ == "AzureComputeResource":
+                self.compute = resource_classes[0](api_root_url='https://test.azure.com')
+                break
 
     def test_actions(self) -> None:
         expected_actions = {'create_or_update': {'method': 'PUT',
