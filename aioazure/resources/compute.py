@@ -1,11 +1,13 @@
 from simple_rest_client.resource import AsyncResource
 
+import os
 import yaml
 
 
 class AzureComputeResource(AsyncResource):
     api_version = None
-    with open('models/compute.yaml', 'r') as f:
+    model = os.path.join(os.path.dirname(__file__), 'models', 'compute.yaml')
+    with open(model, 'r') as f:
         for key, value in yaml.safe_load(f).items():
             vars()[key] = value
 
