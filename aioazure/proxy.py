@@ -1,20 +1,10 @@
+from .interfaces import Proxy
+
 from simple_rest_client.resource import BaseResource
 from simple_rest_client.resource import AsyncResource
 
-from abc import ABCMeta
-from abc import abstractmethod
 from functools import partial
 from inspect import signature
-
-
-class Proxy(metaclass=ABCMeta):
-    @abstractmethod
-    async def __call__(self, method_name: str, *args, **kwargs):
-        return NotImplemented
-
-    @abstractmethod
-    def __getattr__(self, method_name: str):
-        return NotImplemented
 
 
 class ResourceProxy(Proxy):

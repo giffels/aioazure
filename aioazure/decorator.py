@@ -1,29 +1,18 @@
 from .auth import Authenticator
-from .proxy import Proxy
+from .interfaces import ProxyDecorator
 
-from abc import ABCMeta
-from abc import abstractmethod
-from functools import partial
 from typing import Callable
 
 import aiohttp
 import asyncio
 
-
-class ProxyDecorator(Proxy, metaclass=ABCMeta):
-    def __init__(self, proxy: Proxy):
-        self.proxy = proxy
-
-    @abstractmethod
-    async def __call__(self, awaitable_method: Callable, *args, **kwargs):
-        return NotImplemented
-
-    def __getattr__(self, method_name: str):
-        return partial(self, getattr(self.proxy, method_name))
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .interfaces import Proxy
 
 
 class AsyncOperationDecorator(ProxyDecorator):
-    def __init__(self, proxy: Proxy):
+    def __init__(self, proxy: "Proxy"):
         super().__init__(proxy)
 
     async def async_polling(self, url, retry_after):  # ToDo: Auth can be added by passing Authenticator as param.
@@ -50,7 +39,7 @@ class AsyncOperationDecorator(ProxyDecorator):
 
 
 class AuthDecorator(ProxyDecorator):
-    def __init__(self, proxy: Proxy, auth: Authenticator):
+    def __init__(self, proxy: "Proxy", auth: Authenticator):
         super().__init__(proxy)
         self.auth = auth
 
@@ -60,7 +49,7 @@ class AuthDecorator(ProxyDecorator):
 
 
 class PagingDecorator(ProxyDecorator):
-    def __init__(self, proxy: Proxy):
+    def __init__(self, proxy: "Proxy"):
         super().__init__(proxy)
 
     @staticmethod
@@ -86,7 +75,7 @@ class PagingDecorator(ProxyDecorator):
 
 
 class ResponseDecorator(ProxyDecorator):
-    def __init__(self, proxy: Proxy):
+    def __init__(self, proxy: "Proxy"):
         super().__init__(PagingDecorator(AsyncOperationDecorator(proxy)))
 
     async def __call__(self, awaitable_method: Callable, *args, **kwargs):
