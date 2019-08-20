@@ -7,7 +7,7 @@ class TestAzureComputeResource(TestCase):
     def setUp(self) -> None:
         for resource_class in resource_classes:
             if resource_class.__name__ == "AzureComputeResource":
-                self.compute = resource_classes[0](api_root_url='https://test.azure.com')
+                self.compute = resource_class(api_root_url='https://test.azure.com')
                 break
 
     def test_actions(self) -> None:
