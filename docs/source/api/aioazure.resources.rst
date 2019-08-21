@@ -5,10 +5,3 @@ aioazure.resources package
    :members:
    :undoc-members:
    :show-inheritance:
-
-Submodules
-----------
-
-.. toctree::
-
-   aioazure.resources.compute

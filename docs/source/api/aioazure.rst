@@ -11,6 +11,7 @@ Subpackages
 
 .. toctree::
 
+   aioazure.interfaces
    aioazure.resources
 
 Submodules
