@@ -1,5 +1,6 @@
+from aioazure.proxy import ApiProxy
 from aioazure.proxy import ResourceProxy
-from aioazure.proxy import Proxy
+from aioazure.interfaces import Proxy
 
 from .utilities.utilities import async_return
 from .utilities.utilities import run_async
@@ -18,6 +19,53 @@ class TestProxy(TestCase):
 
     def test_getattr(self):
         self.assertEqual(getattr(self.proxy, "test_method"), NotImplemented)
+
+
+class TestApiProxy(TestCase):
+    mock_auth_patcher = None
+    mock_api_patcher = None
+    mock_resource_proxy_patcher = None
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.mock_auth_patcher = patch('aioazure.proxy.Authenticator')
+        cls.mock_auth = cls.mock_auth_patcher.start()
+
+        cls.mock_api_patcher = patch('aioazure.proxy.API')
+        cls.mock_api = cls.mock_api_patcher.start()
+
+        cls.mock_resource_proxy_patcher = patch('aioazure.proxy.ResourceProxy')
+        cls.mock_resource_proxy = cls.mock_resource_proxy_patcher.start()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.mock_auth_patcher.stop()
+        cls.mock_api_patcher.stop()
+        cls.mock_resource_proxy_patcher.stop()
+
+    def setUp(self) -> None:
+        self.mock_api.virtualmachines = "Compute123"
+
+        self.proxy = ApiProxy(api=self.mock_api, auth=self.mock_auth)
+
+    def test_add_resources(self):
+        resource_class = type("AzureComputeResource", (object,), {})
+        resource_name = "compute"
+
+        self.proxy.add_resource(resource_name=resource_name, resource_class=resource_class)
+
+        self.mock_api.add_resource.assert_called_with(api_root_url=None, append_slash=False, headers=None,
+                                                      json_encode_body=False, params=None,
+                                                      resource_class=resource_class, resource_name=resource_name,
+                                                      timeout=None)
+
+    def test_call_proxy(self):
+        with self.assertRaises(TypeError):
+            self.proxy(method_name="test")
+
+    def test_get_attr(self):
+        _ = self.proxy.virtualmachines
+        self.mock_resource_proxy.assert_called_with(resource="Compute123")
 
 
 class TestResourceProxy(TestCase):
