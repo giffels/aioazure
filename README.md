@@ -31,14 +31,14 @@ client = AzureClient(api_url="url_of_the_azure_api",
                      auth=auth, 
                      timeout=60)  # <- this is optional
 
-client.compute.virtualmachines.create_or_update("my-vm-name",
-                                                location="Antarctica")
+await client.compute.virtualmachines.create_or_update("my-vm-name",
+                                                      location="Antarctica")
 
-client.compute.virtualmachines.instance_view("my-vm-name")
+await client.compute.virtualmachines.instance_view("my-vm-name")
 
-client.compute.virtualmachines.power_off("my-vm-name")
+await client.compute.virtualmachines.power_off("my-vm-name")
 
-client.compute.virtualmachines.delete("my-vm-name")
+await client.compute.virtualmachines.delete("my-vm-name")
 ```
 
 ## Currently supported Azure services, operation groups and operations
@@ -48,3 +48,35 @@ client.compute.virtualmachines.delete("my-vm-name")
     * [instance_view](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/instanceview)
     * [power_off](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/poweroff)
     * [delete](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/delete)
+
+## Adding further Azure services, operation groups and operations
+
+Each Azure service (compute, storage services, etc.) is represented by a `yaml` file in the 
+[models](aioazure/resources/models) directory. This `yaml` file contains mapping nodes for each operation
+group (virtualmachines, manageddisks, etc.). Each operation group consists of two mapping nodes, 
+the version of api to use (`api_version`) and the supported operations (`actions`) in this 
+operation group. 
+
+```yaml
+rest_operation_group:
+  api_version: "2018-06-01"
+  actions: 
+    action_1:
+      method: GET
+      url: Microsoft.Compute/rest_operations_group/{}
+    ...
+    action_n:
+      method: POST
+      url: Microsoft.Compute/rest_operations_group/{}
+rest_operation_group_2:
+  ...
+```
+
+The Azure service, operation groups and operation can than be called in Python as described below.
+
+```
+await client.<service_name>.<rest_operation_group>.<action>(args, kwargs)
+```
+
+In case you add additional services, operation groups and operations, please submit a pull request 
+so that others can profit as well from the work you have done. Thank you!
