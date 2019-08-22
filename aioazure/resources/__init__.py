@@ -3,8 +3,7 @@ from simple_rest_client.resource import AsyncResource
 import os
 import yaml
 
-resource_classes = []
-resource_names = []
+azure_resources = {}
 
 
 class AzureResource(AsyncResource):
@@ -18,15 +17,16 @@ class AzureResource(AsyncResource):
 
 for dirpath, _, filenames in os.walk(os.path.join(os.path.dirname(__file__), 'models')):
     for filename in filenames:
+        service_name = os.path.splitext(filename)[0]
         with open(os.path.join(dirpath, filename), 'r') as f:
-            resource_name = os.path.splitext(filename)[0]
-            resource_class = type(f"Azure{resource_name.capitalize()}Resource",
-                                  (AzureResource,),
-                                  {key: value for key, value in yaml.safe_load(f).items()})
-            # noinspection PyArgumentList
-            resource_class.__init__ = lambda self, *args, **kwargs: super(resource_class, self).__init__(*args,
-                                                                                                         **kwargs)
-            resource_classes.append(resource_class)
-            resource_names.append(resource_name)
+            for resource_group, resources in yaml.safe_load(f).items():
+                resource_class = type(f"Azure{service_name.capitalize()}{resource_group.capitalize()}Resource",
+                                      (AzureResource,),
+                                      {key: value for key, value in resources.items()})
+                # noinspection PyArgumentList
+                resource_class.__init__ = lambda self, *args, **kwargs: super(resource_class, self).__init__(*args,
+                                                                                                             **kwargs)
+                azure_resources.setdefault(service_name, []).append(
+                    dict(resource_name=resource_group, resource_class=resource_class))
 
-__all__ = ['resource_classes', 'resource_names']
+__all__ = ['azure_resources']

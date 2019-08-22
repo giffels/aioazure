@@ -31,21 +31,20 @@ client = AzureClient(api_url="url_of_the_azure_api",
                      auth=auth, 
                      timeout=60)  # <- this is optional
 
-client.compute.create_or_update("my-vm-name", 
-                                location="Antarctica")
+client.compute.virtualmachines.create_or_update("my-vm-name",
+                                                location="Antarctica")
 
-client.compute.instance_view("my-vm-name")
+client.compute.virtualmachines.instance_view("my-vm-name")
 
-client.compute.power_off("my-vm-name")
+client.compute.virtualmachines.power_off("my-vm-name")
 
-client.compute.delete("my-vm-name")
+client.compute.virtualmachines.delete("my-vm-name")
 ```
 
-## Currently supported Azure API calls
+## Currently supported Azure services, operation groups and operations
 * [Azure Compute](https://docs.microsoft.com/en-us/rest/api/compute/)
   * [Virtual Machines](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines)
     * [create_or_update](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/createorupdate)
     * [instance_view](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/instanceview)
     * [power_off](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/poweroff)
     * [delete](https://docs.microsoft.com/en-us/rest/api/compute/virtualmachines/delete)
-    

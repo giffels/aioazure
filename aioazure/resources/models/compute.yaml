@@ -1,14 +1,15 @@
-api_version: "2018-06-01"
-actions:
-  create_or_update:
-    method: PUT
-    url: Microsoft.Compute/virtualMachines/{}
-  instance_view:
-    method: GET
-    url: Microsoft.Compute/virtualMachines/{}/instanceView
-  power_off:
-    method: POST
-    url: Microsoft.Compute/virtualMachines/{}/powerOff
-  delete:
-    method: DELETE
-    url: Microsoft.Compute/virtualMachines/{}
+virtualmachines:
+  api_version: "2018-06-01"
+  actions:
+    create_or_update:
+      method: PUT
+      url: Microsoft.Compute/virtualMachines/{}
+    instance_view:
+      method: GET
+      url: Microsoft.Compute/virtualMachines/{}/instanceView
+    power_off:
+      method: POST
+      url: Microsoft.Compute/virtualMachines/{}/powerOff
+    delete:
+      method: DELETE
+      url: Microsoft.Compute/virtualMachines/{}
